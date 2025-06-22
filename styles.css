@@ -1,0 +1,322 @@
+@keyframes move {
+  0% {transform: translateY(0);}
+  55% {transform: translateY(5px);}
+  100% {transform: translateY(0);}
+}
+
+@keyframes wag{
+    0% {transform: rotate(15deg);}
+    55% {transform: rotate(-15deg);}
+    100% {transform: rotate(15deg);}
+}
+
+*{
+    margin: 0px;
+    padding: 0px;
+    user-select: none;
+}
+
+body{
+    background-image: url("https://i.pinimg.com/736x/73/ac/40/73ac408dc91988b275ecb6d8f1a960c5.jpg");
+    background-size : 100%;
+    background-position: center;
+    background-attachment: fixed;
+    
+    /*centering items*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+    font: 19px "Darumadrop One", sans-serif;
+}
+
+.button {
+    padding: 1px 10px 10px 10px;
+    border: 5px solid rgb(125, 143, 167);
+    background: #8da7be;
+    background: linear-gradient(5deg, rgb(147, 171, 194) 0%, rgb(175, 202, 219) 100%);
+    border-radius: 15px;
+    font: 400 25px "Darumadrop One", sans-serif;
+    color: white;
+}
+
+.button:hover{
+    transform:scale(1.03);
+    transition: transform ease-in-out 0.2s;
+    cursor: pointer;
+}
+
+.all-container{
+    padding: 10px;
+    width: 100%;
+    max-width: 550px;
+    box-sizing: border-box;
+    position: relative;
+    min-height: auto;
+    height: auto;
+}
+
+
+footer {
+    background-color: white;
+    font: 300 15px "Brush Script MT", Cursive;
+    width: 100%;
+    position:fixed;
+    bottom: 0px;
+    padding:5px;
+}
+
+/* level up pop up */
+.levelup{
+    position: absolute;
+    z-index: 20;
+    background:rgb(239, 240, 194);
+    border: 3px solid rgb(199, 188, 142); 
+    padding: 10px;
+    border-radius: 10px;
+    color: rgb(59, 59, 59);
+}
+
+.levelup button{
+    border: none;
+    background:rgb(239, 240, 194);
+    padding-left: 10px;
+    font: 800 19px "Darumadrop One", sans-serif;
+    color: rgb(59, 59, 59);
+}
+
+.levelup button:hover{
+    color:rgb(95, 95, 95);
+}
+
+/* inside logo-container*/
+.logo-container{
+    padding: 10px;
+    border-radius: 5px;
+    background: #fadeec;
+    margin-bottom: 10px;
+    border: 5px solid rgb(129, 129, 129);
+    box-shadow: 10px 10px 0px -2px rgba(0,0,0,0.12);
+    text-align: center;
+}
+
+.logo {
+    width: 75%;
+    max-width: 500px;
+    height: auto;
+    animation: move 2s infinite;
+}
+
+.caption{
+    text-align: center;
+    margin: 5px 0px 3px 0px;
+    color: rgba(102, 102, 102, 0.712);
+}
+
+/*inside main stack*/
+.action {
+    position: relative;
+    background: rgb(238, 238, 238);
+    padding: 5px;
+    border: 5px solid rgb(129, 129, 129);
+    min-width: 400px;
+    max-width: 600px;
+    box-shadow: 10px 10px 0px -2px rgba(0,0,0,0.12);
+}
+
+.stack {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.wall, .floor, .rug{
+    display: block;
+    border: 5px solid rgba(238, 238, 238, 0);
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+    background-position: center;
+}
+
+.wall {
+    background-image: url("img/wall/wall_blue.png");
+}
+
+.floor {
+    background-image: url("img/floor/floor_plank.png");
+}
+
+.floor, .rug, .pet{
+    position: absolute;
+    bottom: 0;
+}
+
+.rug {
+    background-image: url("img/rug/rug_pink.png");
+    background-position: bottom;
+}
+
+.tail{
+    position: absolute;
+    width: 70px;
+    left: 55%;
+    bottom: 20%;
+    transform-origin: 40% 80%;
+    animation: wag 0.5s infinite;
+}
+
+.pet{
+    box-sizing: border-box;
+    background-size: cover;
+    background-position: center;
+    width: 55%;
+    height:auto;
+    justify-self: center;
+    padding: 10px;
+    left: 50%;
+    right: 50%;
+}
+
+.floating{
+    position: absolute;
+    display: grid;
+    gap: 5px;
+    grid-template-rows: repeat(3, calc(33.33% - 5px));
+    top:3%;
+    left:3%;
+}
+
+.button-container{
+    margin: 10px;
+    margin-top: 15px;
+    gap: 10px;
+    position: relative;
+    justify-self: center;
+    display: flex;
+}
+
+.timerContainer{
+    justify-content: center;
+    border: 4px solid rgb(153, 153, 153);
+    padding: 4px 12px 4px 12px;
+    border-radius: 10px;
+    font: 600 40px "Brush Script MT", Cursive;
+    color: rgb(95, 95, 95);
+}
+
+/*friendship meter*/
+.happy-container{
+    margin-top: 10px;
+    display: flex;
+    width: 85%;
+    justify-self: center;
+    height: 40px;
+}
+
+.happy{
+    width: 10%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px 10px 0px 0px;
+    background-image: url("https://i.pinimg.com/originals/7d/88/ad/7d88ad0a2eec6928a58c2ebfe48c7a1a.gif");
+    background-position: center;
+    background-size: 90%;
+    color:rgb(255, 255, 255);
+    font: 600 20px "Brush Script MT", Cursive;
+    background-repeat: no-repeat;
+}
+
+.progress-container{
+    border-radius: 5px;
+    border: 4px solid rgb(153, 153, 153);
+    width: 95%;
+    background: #ccd7e0;
+    overflow: hidden;
+}
+
+.progress__fill{
+    width: 0%;
+    height: 100%;
+    background:rgb(255, 239, 151);
+}
+
+/*draggables*/
+#music-draggable, #custom-draggable, #todo-draggable{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-shadow: 10px 10px 0px -2px rgba(0,0,0,0.12);
+    z-index: 10;
+    padding: 10px;
+    border: 5px solid rgb(125, 143, 167);
+    border-radius: 15px;
+    font: 400 20px "Darumadrop One", sans-serif;
+    color: white;
+    background: #8da7be;
+    background: linear-gradient(5deg, rgb(147, 171, 194) 0%, rgb(175, 202, 219) 100%);
+}
+
+#music-drag-handle, #custom-drag-handle, #todo-drag-handle{
+    z-index: 11;
+    margin-bottom: 10px;
+}
+
+/*customize popup*/
+.changepet {
+    display: grid;
+    max-width: 250px;
+}
+.changepet button{
+    width: 100%;
+    margin-top: 5px;
+}
+
+/*music popup*/
+.music{
+    width: 390px;
+}
+
+.music input[type="submit"] {
+    border-radius: 10px;
+    border: 2px solid rgb(121, 128, 138);
+    padding: 0px 3px;
+    font: 400 15px "Darumadrop One", sans-serif;
+    color: rgb(71, 71, 71);
+}
+
+#spotify-link{
+    border-radius: 10px;
+    border: 2px solid rgb(121, 128, 138);
+    font: 300 14px "Brush Script MT", Cursive;
+    color: black;
+}
+
+/*to-do list popup*/
+#addToDo{
+    background: #e6aeb1;
+    background: linear-gradient(0deg, rgba(230, 174, 177, 1) 0%, rgba(240, 187, 198, 1) 100%);
+    border: 5px solid rgb(185, 151, 164);
+}
+
+.to-dos div {
+    background-color: white;
+    color:rgb(95, 95, 95);
+    transition: background-color 0.25s;
+    margin: 5px;
+    padding: 5px;
+    border-radius: 5px;
+    position: relative;
+}
+
+#inputfield{
+    height: 45px;
+    margin: 5px;
+    border-radius:10px;
+    border: 3px solid rgb(129, 129, 129); 
+    font: 20px "Darumadrop One", sans-serif;
+}

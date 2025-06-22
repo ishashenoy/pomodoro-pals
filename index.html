@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Study Timer | Pomodoro Pals</title>
+     <link rel="icon" type="image/x-icon" href="img/favicon.png">
+
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&display=swap" rel="stylesheet">
+    
+    <style type="text/css">* {cursor: url(https://cur.cursors-4u.net/cursors/cur-11/cur1036.cur), auto !important;}</style><a href="https://www.cursors-4u.com/cursor/2012/02/10/pink-blossom-pointer.html" target="_blank" title="Pink Blossom Pointer"><img src="https://cur.cursors-4u.net/cursor.png" border="0" alt="Pink Blossom Pointer" style="position:absolute; top: 0px; right: 0px;" /></a>
+</head>
+<body>
+    <div class ="levelup" id="levelup" style="display: none">
+        💗 Your friendship level has increased!
+        <button onclick="show('levelup')">X</button>
+    </div>
+    <div class="all-container">
+        <div class="logo-container">
+            <img class="logo" src="img/pomodoroPalsLogo.png" draggable="false">
+            <div class="caption">Complete to-dos and pomodoros to make your pet happy!</div>
+        </div>
+        <div class="action">
+            <div class="stack">
+                <div id='wall' class="wall"></div>
+                <div class="floor"></div>
+                <div id='rug'class="rug"></div>
+                <img id='tail' class="tail" src="pets/tails/tail_c.png">
+                <img id='pet' onclick="rub()" class="pet" src="pets/dog/dog_c.png" draggable="false">
+                <div class="floating">
+                    <button onclick="show('music-draggable')" class="button">🎵</button>
+                    <button onclick="show('custom-draggable')" class="button">🔧</button>
+                    <button onclick="show('todo-draggable')" class="button">✔</button>
+                </div>
+            </div>
+            <div class = "happy-container">
+                <div id='lives' class = "happy"></div>
+                <div class="progress-container">
+                    <div id="progress" class="progress__fill"></div>
+                </div>
+            </div>
+            <div class="button-container">
+                <button id="ppBTN" onclick="pauseOrPlay()" class="button">►</button>
+                <div class="timerContainer">
+                    <div id="countdown">25:00</div>
+                </div>
+                <button onclick="changeStartTime(25)" class="button">POMODORO</button>
+                <button onclick="changeStartTime(5)" class="button">BREAK</button>
+            </div>            
+        </div>
+    </div>
+
+    <div id="music-draggable" class="music" style="display: none">
+        <div id="music-drag-handle"">🎵 Music Player</div>
+        <form method="GET" class="music form">
+            <iframe id="spotify-frame" src="https://open.spotify.com/embed/playlist/4hFg3Hi7EotOJapd0ef4jh?utm_source=generator" width="100%" height="155" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+            <label for="spotify-link">Enter a Spotify Playlist Link (URL):</label><br>
+            <input id="spotify-link" type="text" aria-autocomplete="list">
+            <input type="submit">
+        </form>
+    </div>
+
+    <div id="custom-draggable" class="changepet" style="display: none">
+        <div id="custom-drag-handle"">🔧 Customize</div>
+        <button onclick="changePet()" class="button">CHANGE PET</button><br>
+        <button onclick="changeWall()" class="button">CHANGE WALL</button>
+        <button onclick="changeRug()" class="button">CHANGE RUG</button>
+    </div>
+
+    <div oncontextmenu="return false;" id="todo-draggable" class="todo" style="display: none">
+        <div id="todo-drag-handle" style="margin: 0px 0px 0px 10px;">✔ To-do List</div>
+        <div class="container">
+            <input id="inputfield" type="text" aria-autocomplete="list"><button class="button"id="addToDo">+</button>
+            <div class="to-dos" id="toDoContainer">
+            </div>
+        </div>
+        <div style="color:rgba(255, 255, 255, 0.788); margin-left: 12px;">Right-click to delete item</div>
+    </div>
+    <script src='script.js'></script>
+</body>
+<footer>created by <a href="https://github.com/ishashenoy">@ishashenoy</a></footer>
+</html>
