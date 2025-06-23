@@ -183,9 +183,14 @@ function blink(){
 
 function rub(){
     closeEyes();
+    document.querySelector(".happyHeart").style.display = "block";
     happy.play();
     bark.play();
-    sleep(2000).then(() => petEl.src="pets/dog/dog_"+dogs[currentDog]+".png");
+    sleep(2000).then(
+        () => {petEl.src="pets/dog/dog_"+dogs[currentDog]+".png";
+        document.querySelector(".happyHeart").style.display = "none";}
+    );
+
 }
 
 // MUSIC FORM
@@ -244,20 +249,29 @@ function toDoButtonFunctionality(elmnt){
 }
 
 // check for to-do list items in local storage
-let savedTodos = checkLocally('currentTodo',[]);
+let savedTodos = checkLocally('currentTodo',[[]]);
+
 for(let i in savedTodos){
     let paragraph = document.createElement('div');
     paragraph.className = 'currentToDoItem';
-    paragraph.innerText = "🦴   "+ savedTodos[i];
-    toDoContainer.appendChild(paragraph);
-    toDoButtonFunctionality(paragraph);
+    paragraph.innerText = "🦴 "+ savedTodos[i][0];
+    if(savedTodos[i][1] === true){
+        paragraph.style.backgroundColor = "grey";
+    } else {
+        paragraph.style.backgroundColor = "white";
+    }
+
+    if (!(savedTodos[i][0] === undefined)){
+        toDoContainer.appendChild(paragraph);
+        toDoButtonFunctionality(paragraph);
+    }
 }
 
 addToDoButton.addEventListener('click', function(){
     let paragraph = document.createElement('div');
     paragraph.className = 'currentToDoItem';
-    paragraph.innerText = "🦴   "+ inputfield.value;
-    if (!(paragraph.innerText === "🦴   ")){
+    paragraph.innerText = "🦴 "+ inputfield.value;
+    if (!(paragraph.innerText === "🦴 ")){
         toDoContainer.appendChild(paragraph);
         press.play();
     }
@@ -267,9 +281,15 @@ addToDoButton.addEventListener('click', function(){
 
 addEventListener("beforeunload", () => {
     const currentToDoItems = Array.from(document.querySelectorAll(".currentToDoItem"))
-    let todosToSave = [];
-    for(let toDo of currentToDoItems){
-        todosToSave.push(toDo.innerText.trim().slice(3));
+    let todosToSave = [[]];
+    for(let i = 0; i < currentToDoItems.length; i++){
+        todosToSave[i] = [];
+        todosToSave[i][0] =currentToDoItems[i].innerText.trim().slice(3);
+        if(currentToDoItems[i].style.backgroundColor === "grey"){
+            todosToSave[i][1] = true;
+        } else {
+            todosToSave[i][1] = false;
+        }
     }
     localStorage.setItem('currentTodo', JSON.stringify(todosToSave));
 });
