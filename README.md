@@ -4,7 +4,7 @@
 <p align="center">Complete pomodoros and check off to-dos to make your pet happy.</p>
 
 ## Features
-<img src="https://file.notion.so/f/f/cd5968b9-2ee7-47cc-9922-9a09715312c8/b5f224a2-7c62-4761-82ba-26cda33894d8/6ddba5fa-a72a-40cd-bdb2-335d909f8d36.png?table=block&id=21a9b9a3-6e05-80d1-98b9-c293165e7372&spaceId=cd5968b9-2ee7-47cc-9922-9a09715312c8&expirationTimestamp=1750658400000&signature=7X6_hG18S07msFQfxs3ljnLh6rux88led3UAjAByPcY&downloadName=image.png" style="width:600px">
+<img src="https://file.notion.so/f/f/cd5968b9-2ee7-47cc-9922-9a09715312c8/90b410d1-53b4-44d5-be94-724dc9a509bc/9ba08bc5-a0b8-4dd6-aafe-dd93318001ba.png?table=block&id=21b9b9a3-6e05-8063-ac49-db8eb2a87be0&spaceId=cd5968b9-2ee7-47cc-9922-9a09715312c8&expirationTimestamp=1750687200000&signature=oSS_RUycjjmDt7XMNn5_Y04stbox73kRUnP4L2_WDMM&downloadName=image.png" style="width:600px">
 <ul>
   <li>Pomodoro study timer.</li>
   <li>Spotify music integration.</li>
