@@ -4,7 +4,7 @@ function sleep(ms) {
 }
 
 function show(elmnt){
-    var x = document.getElementById(elmnt);
+    let x = document.getElementById(elmnt);
     if (x.style.display === "none"){
         x.style.display = "block";
     } else {
@@ -12,12 +12,22 @@ function show(elmnt){
     }
 }
 
+function checkLocally(elemnt, vValue){
+    const storedValue = localStorage.getItem(elemnt);
+
+    if (storedValue === null || storedValue === undefined || storedValue === '') {
+        localStorage.setItem(elemnt, JSON.stringify(vValue));
+    }
+
+    return JSON.parse(localStorage.getItem(elemnt));
+}
+
 // AUDIOS
-var bark = new Audio('sounds/bark.wav');
-var notif = new Audio('sounds/notif.mp3');
-var press = new Audio('sounds/press.mp3');
-var happy = new Audio('sounds/happy.mp3');
-var levelup = new Audio('sounds/levelup.wav');
+const bark = new Audio('sounds/bark.wav');
+const notif = new Audio('sounds/notif.mp3');
+const press = new Audio('sounds/press.mp3');
+const happy = new Audio('sounds/happy.mp3');
+const levelup = new Audio('sounds/levelup.wav');
 
 // TIMER
 let counter;
@@ -110,35 +120,14 @@ function dragElement(elmt, handle){
 let dogs = ['c','h','j','l','s'];
 let colors = ['blue','pink','yellow','white'];
 
-//check if item exists in local storage
-function checkLocally(elemnt){
-    const storedValue = localStorage.getItem(elemnt);
-
-    if (storedValue === null || storedValue === undefined || storedValue === '') {
-        localStorage.setItem(elemnt, JSON.stringify(0));
-    }
-}
-
 // updating pet
-checkLocally('currentDog');
-let currentDog = JSON.parse(localStorage.getItem('currentDog'));
+let currentDog = checkLocally('currentDog',0);
 
-const tailEl = document.getElementById('tail');
-const petEl = document.getElementById('pet');
+tailEl = document.getElementById('tail');
+petEl = document.getElementById('pet');
 
 tailEl.src="pets/tails/tail_"+dogs[currentDog]+".png";
 petEl.src="pets/dog/dog_"+dogs[currentDog]+".png";
-
-// updating furnitures
-checkLocally('currentWall');
-let currentWall = JSON.parse(localStorage.getItem('currentWall'));
-const wallEl = document.getElementById('wall');
-wallEl.style.backgroundImage = 'url("img/wall/wall_'+colors[currentWall]+'.png")';
-
-checkLocally('currentRug');
-let currentRug = JSON.parse(localStorage.getItem('currentRug'));
-const rugEl = document.getElementById('rug');
-rugEl.style.backgroundImage = 'url("img/rug/rug_'+colors[currentRug]+'.png")';
 
 function changePet(){
     if (currentDog===dogs.length -1){
@@ -150,6 +139,16 @@ function changePet(){
     petEl.src="pets/dog/dog_"+dogs[currentDog]+".png";
     tailEl.src="pets/tails/tail_"+dogs[currentDog]+".png";
 }
+
+
+// updating furnitures
+let currentWall = checkLocally('currentWall',0);
+const wallEl = document.getElementById('wall');
+wallEl.style.backgroundImage = 'url("img/wall/wall_'+colors[currentWall]+'.png")';
+
+let currentRug = checkLocally('currentRug',0);
+const rugEl = document.getElementById('rug');
+rugEl.style.backgroundImage = 'url("img/rug/rug_'+colors[currentRug]+'.png")';
 
 function changeWall(){
     if (currentWall===colors.length -1){
@@ -170,6 +169,7 @@ function changeRug(){
     localStorage.setItem('currentRug', currentRug);
     rugEl.style.backgroundImage = 'url("img/rug/rug_'+colors[currentRug]+'.png")';
 }
+
 
 // PET
 function closeEyes(){
@@ -196,15 +196,13 @@ document.querySelector(".music form").addEventListener("submit", function(event)
     spotifyIframe.src = `https://open.spotify.com/embed/playlist/` + input.slice(34) + `?utm_source=generator`;   
 });
 
-// FRIENDSHIP-METER
+// FRIENDSHIP METER
 // updating friendship meter
-checkLocally('currentlives');
-let currentlives = JSON.parse(localStorage.getItem('currentlives'));
+let currentlives = checkLocally('currentlives',0);
 const livesEl = document.getElementById('lives');
 livesEl.textContent = parseInt(currentlives);
 
-checkLocally('progressfill');
-let progressfill = JSON.parse(localStorage.getItem('progressfill'));
+let progressfill = checkLocally('progressfill',0);
 const progressfillEl = document.getElementById('progress');
 progressfillEl.style.width = parseInt(progressfill) + "%";
 
@@ -228,28 +226,53 @@ function updateHappyBar(){
 let addToDoButton = document.getElementById('addToDo');
 let toDoContainer = document.getElementById('toDoContainer');
 let inputfield = document.getElementById('inputfield');
+
+function toDoButtonFunctionality(elmnt){
+    elmnt.addEventListener('click', function(){
+        if (elmnt.style.backgroundColor === "grey"){
+            elmnt.style.backgroundColor = "white";
+        } else {
+            elmnt.style.backgroundColor = "grey";
+            updateHappyBar();
+            rub();
+        }
+    })
+    elmnt.addEventListener('contextmenu', function(){
+        toDoContainer.removeChild(elmnt);
+    })
+
+}
+
+// check for to-do list items in local storage
+let savedTodos = checkLocally('currentTodo',[]);
+for(let i in savedTodos){
+    let paragraph = document.createElement('div');
+    paragraph.className = 'currentToDoItem';
+    paragraph.innerText = "🦴   "+ savedTodos[i];
+    toDoContainer.appendChild(paragraph);
+    toDoButtonFunctionality(paragraph);
+}
+
 addToDoButton.addEventListener('click', function(){
-    var paragraph = document.createElement('div');
+    let paragraph = document.createElement('div');
+    paragraph.className = 'currentToDoItem';
     paragraph.innerText = "🦴   "+ inputfield.value;
     if (!(paragraph.innerText === "🦴   ")){
         toDoContainer.appendChild(paragraph);
         press.play();
     }
     inputfield.value = "";
-    paragraph.addEventListener('click', function(){
-        if (paragraph.style.backgroundColor === "grey"){
-            paragraph.style.backgroundColor = "white";
-        } else {
-            paragraph.style.backgroundColor = "grey";
-            updateHappyBar();
-            rub();
-        }
-        
-    })
-    paragraph.addEventListener('contextmenu', function(){
-        toDoContainer.removeChild(paragraph);
-    })
-})
+    toDoButtonFunctionality(paragraph);
+});
+
+addEventListener("beforeunload", () => {
+    const currentToDoItems = Array.from(document.querySelectorAll(".currentToDoItem"))
+    let todosToSave = [];
+    for(let toDo of currentToDoItems){
+        todosToSave.push(toDo.innerText.trim().slice(3));
+    }
+    localStorage.setItem('currentTodo', JSON.stringify(todosToSave));
+});
 
 // INITIALIZATION
 // blink every 4 seconds
