@@ -19,40 +19,64 @@
         <button onclick="show('levelup')">X</button>
     </div>
     <div class="all-container">
-        <div class="logo-container">
-            <img class="logo" src="img/pomodoroPalsLogo.png" draggable="false">
-            <div class="caption">Complete to-dos and pomodoros to make your pet happy!</div>
-        </div>
-        <div class="action">
-            <div class="stack">
-                <div id='wall' class="wall"></div>
-                <div class="floor"></div>
-                <div id='rug'class="rug"></div>
-                <img id='tail' class="tail" src="pets/tails/tail_c.png">
-                <img id='pet' onclick="rub()" class="pet" src="pets/dog/dog_c.png" draggable="false">
-                <img src="https://i.pinimg.com/originals/7d/88/ad/7d88ad0a2eec6928a58c2ebfe48c7a1a.gif" class="happyHeart" style="display: none">
-                <div class="floating">
-                    <button onclick="show('music-draggable')" title="MUSIC" class="button" id="music-btn">🎵<span>MUSIC PLAYER</span></button>
-                    <button onclick="openCustomizeModal()" title="CUSTOMIZE" class="button">🔧<span>CUSTOMIZE</span></button>
-                    <button onclick="show('todo-draggable')" title="TO-DO LIST" class="button">✔<span>TO-DO LIST</span></button>
+        <div class="left-content">
+            <div class="logo-container">
+                <img class="logo" src="img/pomodoroPalsLogo.png" draggable="false">
+                <div class="caption">Complete to-dos and pomodoros to make your pet happy!</div>
+            </div>
+            <div id="custom-draggable" class="changepet" style="display: none">
+                <div id="custom-drag-handle">🔧 Settings <button type="button" class="custom-modal-close" onclick="closeCustomizeModal()" aria-label="Close customize modal">X</button></div>
+                <div class="settings-tabs" role="tablist" aria-label="Settings pages">
+                    <button type="button" class="settings-tab is-active" id="settings-tab-appearance" onclick="setSettingsPage('appearance')" role="tab" aria-controls="settings-page-appearance" aria-selected="true">Appearance</button>
+                    <button type="button" class="settings-tab" id="settings-tab-timer" onclick="setSettingsPage('timer')" role="tab" aria-controls="settings-page-timer" aria-selected="false">Timer</button>
+                </div>
+                <div id="settings-page-appearance" class="settings-page is-active" role="tabpanel" aria-labelledby="settings-tab-appearance">
+                    <button onclick="changePet()" class="button">CHANGE PET</button>
+                    <button onclick="changeWall()" class="button">CHANGE WALL</button>
+                    <button onclick="changeRug()" class="button">CHANGE RUG</button>
+                </div>
+                <div id="settings-page-timer" class="settings-page" role="tabpanel" aria-labelledby="settings-tab-timer">
+                    <div class="timer-settings">
+                        <label for="pomodoro-minutes">Pomodoro length (minutes):</label>
+                        <input id="pomodoro-minutes" class="timer-setting-input" type="number" min="1" max="120" step="1" value="25">
+                        <label for="break-minutes">Break length (minutes):</label>
+                        <input id="break-minutes" class="timer-setting-input" type="number" min="1" max="60" step="1" value="5">
+                        <button type="button" onclick="saveTimerDurations()" class="button timer-settings-save">SAVE TIMER LENGTHS</button>
+                    </div>
                 </div>
             </div>
-            <div class = "happy-container">
-                <div id='lives' class = "happy"></div>
-                <div class="progress-container">
-                    <div id="progress" class="progress__fill"></div>
-                </div>
-            </div>
-            <div class="button-container">
-                <button id="ppBTN" onclick="pauseOrPlay()" class="button">►</button>
-                <div class="timerContainer">
-                    <div id="countdown">25:00</div>
-                </div>
-                <button onclick="startPomodoroSession()" class="button">POMODORO</button>
-                <button onclick="startBreakSession()" class="button">BREAK</button>
-            </div>            
         </div>
-        <br>
+        <div class="main-content">
+            <div class="action">
+                <div class="stack">
+                    <div id='wall' class="wall"></div>
+                    <div class="floor"></div>
+                    <div id='rug'class="rug"></div>
+                    <img id='tail' class="tail" src="pets/tails/tail_c.png">
+                    <img id='pet' onclick="rub()" class="pet" src="pets/dog/dog_c.png" draggable="false">
+                    <img src="https://i.pinimg.com/originals/7d/88/ad/7d88ad0a2eec6928a58c2ebfe48c7a1a.gif" class="happyHeart" style="display: none">
+                    <div class="floating">
+                        <button onclick="show('music-draggable')" title="MUSIC" class="button" id="music-btn">🎵<span>MUSIC PLAYER</span></button>
+                        <button onclick="openCustomizeModal()" title="CUSTOMIZE" class="button">🔧<span>CUSTOMIZE</span></button>
+                        <button onclick="show('todo-draggable')" title="TO-DO LIST" class="button">✔<span>TO-DO LIST</span></button>
+                    </div>
+                </div>
+                <div class = "happy-container">
+                    <div id='lives' class = "happy"></div>
+                    <div class="progress-container">
+                        <div id="progress" class="progress__fill"></div>
+                    </div>
+                </div>
+                <div class="button-container">
+                    <button id="ppBTN" onclick="pauseOrPlay()" class="button">►</button>
+                    <div class="timerContainer">
+                        <div id="countdown">25:00</div>
+                    </div>
+                    <button onclick="startPomodoroSession()" class="button">POMODORO</button>
+                    <button onclick="startBreakSession()" class="button">BREAK</button>
+                </div>            
+            </div>
+        </div>
     </div>
 
     <div id="music-draggable" class="music" style="display: none">
@@ -65,42 +89,25 @@
             <form method="GET" id="spotify-form">
                 <iframe id="spotify-frame" src="https://open.spotify.com/embed/playlist/4hFg3Hi7EotOJapd0ef4jh?utm_source=generator" width="100%" height="155" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                 <label for="spotify-link">Enter a Spotify playlist/song URL:</label>
-                <input id="spotify-link" type="text" aria-autocomplete="list" placeholder="https://open.spotify.com/playlist/...">
-                <input type="submit" value="Load Spotify">
+                <div class="music-url-row">
+                    <input id="spotify-link" type="text" aria-autocomplete="list" placeholder="https://open.spotify.com/playlist/...">
+                    <input type="submit" value="Load">
+                </div>
             </form>
         </div>
         <div id="music-page-youtube" class="music-page" role="tabpanel" aria-labelledby="music-tab-youtube">
             <form method="GET" id="youtube-form">
                 <iframe id="youtube-frame" src="https://www.youtube.com/embed/videoseries?list=PLFgquLnL59alW3xmYiWRaoz0oM3H17Lth" width="100%" height="155" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" loading="lazy"></iframe>
                 <label for="youtube-link">Enter a YouTube playlist/song URL:</label>
-                <input id="youtube-link" type="text" aria-autocomplete="list" placeholder="https://www.youtube.com/watch?v=...">
-                <input type="submit" value="Load YouTube">
+                <div class="music-url-row">
+                    <input id="youtube-link" type="text" aria-autocomplete="list" placeholder="https://www.youtube.com/watch?v=...">
+                    <input type="submit" value="Load">
+                </div>
             </form>
         </div>
     </div>
 
     <div id="custom-modal-backdrop" class="custom-modal-backdrop" style="display: none" onclick="closeCustomizeModal()"></div>
-    <div id="custom-draggable" class="changepet" style="display: none">
-        <div id="custom-drag-handle">🔧 Settings <button type="button" class="custom-modal-close" onclick="closeCustomizeModal()" aria-label="Close customize modal">X</button></div>
-        <div class="settings-tabs" role="tablist" aria-label="Settings pages">
-            <button type="button" class="settings-tab is-active" id="settings-tab-appearance" onclick="setSettingsPage('appearance')" role="tab" aria-controls="settings-page-appearance" aria-selected="true">Appearance</button>
-            <button type="button" class="settings-tab" id="settings-tab-timer" onclick="setSettingsPage('timer')" role="tab" aria-controls="settings-page-timer" aria-selected="false">Timer</button>
-        </div>
-        <div id="settings-page-appearance" class="settings-page is-active" role="tabpanel" aria-labelledby="settings-tab-appearance">
-            <button onclick="changePet()" class="button">CHANGE PET</button>
-            <button onclick="changeWall()" class="button">CHANGE WALL</button>
-            <button onclick="changeRug()" class="button">CHANGE RUG</button>
-        </div>
-        <div id="settings-page-timer" class="settings-page" role="tabpanel" aria-labelledby="settings-tab-timer">
-            <div class="timer-settings">
-                <label for="pomodoro-minutes">Pomodoro length (minutes):</label>
-                <input id="pomodoro-minutes" class="timer-setting-input" type="number" min="1" max="120" step="1" value="25">
-                <label for="break-minutes">Break length (minutes):</label>
-                <input id="break-minutes" class="timer-setting-input" type="number" min="1" max="60" step="1" value="5">
-                <button type="button" onclick="saveTimerDurations()" class="button timer-settings-save">SAVE TIMER LENGTHS</button>
-            </div>
-        </div>
-    </div>
 
     <div oncontextmenu="return false;" id="todo-draggable" class="todo" style="display: none">
         <div id="todo-drag-handle" style="margin: 0px 0px 0px 10px;">✔ To-do List</div>

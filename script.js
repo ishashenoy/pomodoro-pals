@@ -14,6 +14,25 @@ function show(elmnt){
 
 let currentSettingsPage = 'appearance';
 let currentMusicPage = 'spotify';
+let isDesktopSettingsVisible = true;
+
+function isDesktopSettingsLayout(){
+    return window.matchMedia('(min-width: 1024px)').matches;
+}
+
+function syncSettingsLayout(){
+    const backdrop = document.getElementById('custom-modal-backdrop');
+    const settingsPanel = document.getElementById('custom-draggable');
+    if (!backdrop || !settingsPanel) return;
+
+    if (isDesktopSettingsLayout()) {
+        backdrop.style.display = 'none';
+        settingsPanel.style.display = isDesktopSettingsVisible ? 'block' : 'none';
+    } else {
+        backdrop.style.display = 'none';
+        settingsPanel.style.display = 'none';
+    }
+}
 
 function setSettingsPage(page){
     const pages = ['appearance', 'timer'];
@@ -38,12 +57,23 @@ function setSettingsPage(page){
 }
 
 function openCustomizeModal() {
+    setSettingsPage(currentSettingsPage || 'appearance');
+    if (isDesktopSettingsLayout()) {
+        isDesktopSettingsVisible = !isDesktopSettingsVisible;
+        document.getElementById('custom-modal-backdrop').style.display = 'none';
+        document.getElementById('custom-draggable').style.display = isDesktopSettingsVisible ? 'block' : 'none';
+        return;
+    }
     document.getElementById('custom-modal-backdrop').style.display = 'block';
     document.getElementById('custom-draggable').style.display = 'block';
-    setSettingsPage(currentSettingsPage || 'appearance');
 }
 
 function closeCustomizeModal() {
+    if (isDesktopSettingsLayout()) {
+        isDesktopSettingsVisible = false;
+        document.getElementById('custom-draggable').style.display = 'none';
+        return;
+    }
     document.getElementById('custom-modal-backdrop').style.display = 'none';
     document.getElementById('custom-draggable').style.display = 'none';
 }
@@ -172,18 +202,26 @@ function updateCountdown(){
 
 /*drag script*/
 function dragElement(elmt, handle){
-  var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  var activePointerId = null;
+    let isDragging = false;
+    let activePointerId = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    function positionElement(clientX, clientY){
+        elmt.style.left = (clientX - offsetX) + "px";
+        elmt.style.top = (clientY - offsetY) + "px";
+    }
 
     function startDrag(e) {
-        e.preventDefault();
-
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
             return;
         }
 
-        pos3 = e.clientX;
-        pos4 = e.clientY;
+        const rect = elmt.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        isDragging = true;
+        e.preventDefault();
 
         if (e.pointerId !== undefined) {
             activePointerId = e.pointerId;
@@ -192,42 +230,39 @@ function dragElement(elmt, handle){
     }
 
     function elementDrag(e){
-        if (activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) {
-            return;
-        }
+        if (!isDragging) return;
+        if (activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) return;
 
         e.preventDefault();
-        pos1 = pos3 - e.clientX;
-        pos2 = pos4 - e.clientY;
-        pos3 = e.clientX;
-        pos4 = e.clientY;
-
-        elmt.style.top = (elmt.offsetTop - pos2) + "px";
-        elmt.style.left = (elmt.offsetLeft - pos1) + "px";
+        positionElement(e.clientX, e.clientY);
     }
 
     function closeDragElement(e){
-        if (e && activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) {
-            return;
-        }
+        if (!isDragging) return;
+        if (e && activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) return;
 
         if (e && e.pointerId !== undefined && handle.hasPointerCapture(e.pointerId)) {
             handle.releasePointerCapture(e.pointerId);
         }
 
+        isDragging = false;
         activePointerId = null;
     }
 
     if (window.PointerEvent) {
         handle.addEventListener('pointerdown', startDrag);
-        handle.addEventListener('pointermove', elementDrag);
-        handle.addEventListener('pointerup', closeDragElement);
-        handle.addEventListener('pointercancel', closeDragElement);
+        window.addEventListener('pointermove', elementDrag);
+        window.addEventListener('pointerup', closeDragElement);
+        window.addEventListener('pointercancel', closeDragElement);
     } else {
         handle.onmousedown = function(e) {
             startDrag(e || window.event);
-            document.onmouseup = closeDragElement;
             document.onmousemove = elementDrag;
+            document.onmouseup = function(mouseUpEvent){
+                closeDragElement(mouseUpEvent || window.event);
+                document.onmousemove = null;
+                document.onmouseup = null;
+            };
         };
     }
 }
@@ -487,3 +522,6 @@ document.addEventListener('keydown', function (event) {
         closeCustomizeModal();
     }
 });
+
+syncSettingsLayout();
+window.addEventListener('resize', syncSettingsLayout);
