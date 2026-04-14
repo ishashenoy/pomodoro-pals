@@ -12,6 +12,64 @@ function show(elmnt){
     }
 }
 
+let currentSettingsPage = 'appearance';
+let currentMusicPage = 'spotify';
+
+function setSettingsPage(page){
+    const pages = ['appearance', 'timer'];
+    if (!pages.includes(page)) return;
+
+    pages.forEach((pageId) => {
+        const tabEl = document.getElementById(`settings-tab-${pageId}`);
+        const pageEl = document.getElementById(`settings-page-${pageId}`);
+        const isActive = pageId === page;
+
+        if (tabEl) {
+            tabEl.classList.toggle('is-active', isActive);
+            tabEl.setAttribute('aria-selected', String(isActive));
+        }
+
+        if (pageEl) {
+            pageEl.classList.toggle('is-active', isActive);
+        }
+    });
+
+    currentSettingsPage = page;
+}
+
+function openCustomizeModal() {
+    document.getElementById('custom-modal-backdrop').style.display = 'block';
+    document.getElementById('custom-draggable').style.display = 'block';
+    setSettingsPage(currentSettingsPage || 'appearance');
+}
+
+function closeCustomizeModal() {
+    document.getElementById('custom-modal-backdrop').style.display = 'none';
+    document.getElementById('custom-draggable').style.display = 'none';
+}
+
+function setMusicPage(page){
+    const pages = ['spotify', 'youtube'];
+    if (!pages.includes(page)) return;
+
+    pages.forEach((pageId) => {
+        const tabEl = document.getElementById(`music-tab-${pageId}`);
+        const pageEl = document.getElementById(`music-page-${pageId}`);
+        const isActive = pageId === page;
+
+        if (tabEl) {
+            tabEl.classList.toggle('is-active', isActive);
+            tabEl.setAttribute('aria-selected', String(isActive));
+        }
+
+        if (pageEl) {
+            pageEl.classList.toggle('is-active', isActive);
+        }
+    });
+
+    currentMusicPage = page;
+}
+
 function checkLocally(elemnt, vValue){
     const storedValue = localStorage.getItem(elemnt);
 
@@ -33,11 +91,19 @@ const levelup = new Audio('sounds/levelup.wav');
 let counter;
 let minutes;
 
-let startingMinutes = 25;
+let pomodoroMinutes = checkLocally('pomodoroMinutes', 25);
+let breakMinutes = checkLocally('breakMinutes', 5);
+let startingMinutes = pomodoroMinutes;
 let time = startingMinutes * 60;
 
 const playButton = document.getElementById('ppBTN');
 const countdownEl = document.getElementById('countdown');
+countdownEl.innerHTML = `${startingMinutes}:00`;
+
+const pomodoroMinutesInput = document.getElementById('pomodoro-minutes');
+const breakMinutesInput = document.getElementById('break-minutes');
+pomodoroMinutesInput.value = pomodoroMinutes;
+breakMinutesInput.value = breakMinutes;
 
 function pauseOrPlay(){
     press.play();
@@ -57,6 +123,32 @@ function changeStartTime(startTime){
     playButton.textContent ='►';
     startingMinutes = startTime;
     time = startingMinutes * 60;
+    press.play();
+}
+
+function startPomodoroSession(){
+    changeStartTime(pomodoroMinutes);
+}
+
+function startBreakSession(){
+    changeStartTime(breakMinutes);
+}
+
+function clampTimerMinutes(value, min, max, fallback){
+    let n = parseInt(value, 10);
+    if (Number.isNaN(n)) return fallback;
+    return Math.min(max, Math.max(min, n));
+}
+
+function saveTimerDurations(){
+    const p = clampTimerMinutes(pomodoroMinutesInput.value, 1, 120, 25);
+    const b = clampTimerMinutes(breakMinutesInput.value, 1, 60, 5);
+    pomodoroMinutesInput.value = p;
+    breakMinutesInput.value = b;
+    pomodoroMinutes = p;
+    breakMinutes = b;
+    localStorage.setItem('pomodoroMinutes', JSON.stringify(p));
+    localStorage.setItem('breakMinutes', JSON.stringify(b));
     press.play();
 }
 
@@ -81,10 +173,9 @@ function updateCountdown(){
 /*drag script*/
 function dragElement(elmt, handle){
   var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-  handle.onmousedown = dragMouseDown;
+  var activePointerId = null;
 
-    function dragMouseDown(e) {
-        e = e || window.event;
+    function startDrag(e) {
         e.preventDefault();
 
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON') {
@@ -94,12 +185,17 @@ function dragElement(elmt, handle){
         pos3 = e.clientX;
         pos4 = e.clientY;
 
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
+        if (e.pointerId !== undefined) {
+            activePointerId = e.pointerId;
+            handle.setPointerCapture(e.pointerId);
+        }
     }
 
     function elementDrag(e){
-        e = e || window.event;
+        if (activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) {
+            return;
+        }
+
         e.preventDefault();
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
@@ -110,10 +206,30 @@ function dragElement(elmt, handle){
         elmt.style.left = (elmt.offsetLeft - pos1) + "px";
     }
 
-    function closeDragElement(){
-        document.onmouseup = null;
-        document.onmousemove = null;
-    }    
+    function closeDragElement(e){
+        if (e && activePointerId !== null && e.pointerId !== undefined && e.pointerId !== activePointerId) {
+            return;
+        }
+
+        if (e && e.pointerId !== undefined && handle.hasPointerCapture(e.pointerId)) {
+            handle.releasePointerCapture(e.pointerId);
+        }
+
+        activePointerId = null;
+    }
+
+    if (window.PointerEvent) {
+        handle.addEventListener('pointerdown', startDrag);
+        handle.addEventListener('pointermove', elementDrag);
+        handle.addEventListener('pointerup', closeDragElement);
+        handle.addEventListener('pointercancel', closeDragElement);
+    } else {
+        handle.onmousedown = function(e) {
+            startDrag(e || window.event);
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        };
+    }
 }
 
 // CUSTOMIZATION
@@ -194,12 +310,71 @@ function rub(){
 }
 
 // MUSIC FORM
-document.querySelector(".music form").addEventListener("submit", function(event) {
-    event.preventDefault(); 
-    const input = document.getElementById("spotify-link").value.trim();
-    const spotifyIframe = document.getElementById("spotify-frame");
-    spotifyIframe.src = `https://open.spotify.com/embed/playlist/` + input.slice(34) + `?utm_source=generator`;   
-});
+function getSpotifyEmbedUrl(input){
+    if (!input) return null;
+
+    if (input.includes('open.spotify.com/embed/')) {
+        return input.includes('?') ? `${input}&utm_source=generator` : `${input}?utm_source=generator`;
+    }
+
+    const match = input.match(/open\.spotify\.com\/(playlist|track)\/([a-zA-Z0-9]+)/);
+    if (!match) return null;
+
+    const type = match[1];
+    const id = match[2];
+    return `https://open.spotify.com/embed/${type}/${id}?utm_source=generator`;
+}
+
+function getYouTubeEmbedUrl(input){
+    if (!input) return null;
+
+    let parsedUrl;
+    try {
+        parsedUrl = new URL(input);
+    } catch (error) {
+        return null;
+    }
+
+    const host = parsedUrl.hostname.replace('www.', '');
+    const listId = parsedUrl.searchParams.get('list');
+    const videoId = parsedUrl.searchParams.get('v');
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+        if (listId) return `https://www.youtube.com/embed/videoseries?list=${encodeURIComponent(listId)}`;
+        if (videoId) return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}`;
+    }
+
+    if (host === 'youtu.be') {
+        const shortId = parsedUrl.pathname.replace('/', '');
+        if (shortId) return `https://www.youtube.com/embed/${encodeURIComponent(shortId)}`;
+    }
+
+    return null;
+}
+
+const spotifyFormEl = document.getElementById('spotify-form');
+if (spotifyFormEl) {
+    spotifyFormEl.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const input = document.getElementById('spotify-link').value.trim();
+        const spotifyIframe = document.getElementById('spotify-frame');
+        const embedUrl = getSpotifyEmbedUrl(input);
+        if (!embedUrl) return;
+        spotifyIframe.src = embedUrl;
+    });
+}
+
+const youtubeFormEl = document.getElementById('youtube-form');
+if (youtubeFormEl) {
+    youtubeFormEl.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const input = document.getElementById('youtube-link').value.trim();
+        const youtubeIframe = document.getElementById('youtube-frame');
+        const embedUrl = getYouTubeEmbedUrl(input);
+        if (!embedUrl) return;
+        youtubeIframe.src = embedUrl;
+    });
+}
 
 // FRIENDSHIP METER
 // updating friendship meter
@@ -305,5 +480,10 @@ setInterval(
 
 // set up draggable elements
 dragElement(document.getElementById("music-draggable"), document.getElementById("music-drag-handle"));
-dragElement(document.getElementById("custom-draggable"), document.getElementById("custom-drag-handle"));
 dragElement(document.getElementById("todo-draggable"), document.getElementById("todo-drag-handle"));
+
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        closeCustomizeModal();
+    }
+});

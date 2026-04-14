@@ -16,6 +16,11 @@
     user-select: none;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body{
     background-image: url("https://i.pinimg.com/736x/73/ac/40/73ac408dc91988b275ecb6d8f1a960c5.jpg");
     background-size : 100%;
@@ -27,6 +32,10 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    min-height: 100dvh;
+    box-sizing: border-box;
+    padding-bottom: 44px;
+    padding-bottom: calc(44px + env(safe-area-inset-bottom, 0px));
 
     font: 19px "Darumadrop One", sans-serif;
 }
@@ -61,7 +70,7 @@ body{
     top: 10px;
     text-decoration: none;
     background-color: aliceblue;
-    font: 600 15px "Brush Script MT", Cursive !important;
+    font: 600 15px "Darumadrop One", sans-serif !important;
     color:rgb(59, 59, 59);
     opacity: 75%;
 }
@@ -74,18 +83,79 @@ body{
     position: relative;
     min-height: auto;
     height: auto;
-    transform: scale(0.9);
 }
 
+@media (min-width: 1024px) {
+    .all-container {
+        transform: scale(0.88);
+        transform-origin: center center;
+        padding: 8px 10px;
+    }
+
+    .logo-container {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .stack {
+        aspect-ratio: 4 / 2.88;
+    }
+
+    .happy-container {
+        margin-top: 8px;
+        height: 36px;
+    }
+
+    .button-container {
+        margin-top: 12px;
+        margin-bottom: 8px;
+    }
+
+    .levelup {
+        transform: scale(0.88);
+        transform-origin: top center;
+    }
+}
+
+@media (min-width: 1440px) {
+    .all-container {
+        transform: scale(0.82);
+    }
+
+    .stack {
+        aspect-ratio: 4 / 2.8;
+    }
+
+    .happy-container {
+        height: 34px;
+    }
+
+    .levelup {
+        transform: scale(0.82);
+    }
+}
 
 footer {
     background-color: white;
-    font: 300 15px "Brush Script MT", Cursive;
+    font: 300 15px "Darumadrop One", sans-serif;
     width: 100%;
     position:fixed;
     bottom: 0px;
     padding:5px;
     z-index: 100;
+}
+
+@media (min-width: 1024px) {
+    footer {
+        font-size: 14px;
+        padding: 4px;
+    }
+}
+
+@media (min-width: 1440px) {
+    footer {
+        font-size: 13px;
+    }
 }
 
 /* level up pop up */
@@ -216,7 +286,9 @@ footer {
     position: relative;
     justify-self: center;
     display: flex;
-    
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 .timerContainer{
@@ -224,7 +296,7 @@ footer {
     border: 4px solid rgb(153, 153, 153);
     padding: 4px 12px 4px 12px;
     border-radius: 10px;
-    font: 600 40px "Brush Script MT", Cursive;
+    font: 700 clamp(1.5rem, 5.5vw, 2.5rem) "Comic Neue", "Comic Sans MS", sans-serif;
     color: rgb(95, 95, 95);
 }
 
@@ -248,7 +320,7 @@ footer {
     background-position: center;
     background-size: 90%;
     color:rgb(255, 255, 255);
-    font: 600 20px "Brush Script MT", Cursive;
+    font: 600 20px "Darumadrop One", sans-serif;
     background-repeat: no-repeat;
 }
 
@@ -275,12 +347,29 @@ footer {
 }
 
 /*draggables*/
-#music-draggable, #custom-draggable, #todo-draggable{
+#music-draggable, #todo-draggable{
     position: absolute;
     top: 50%;
     left: 50%;
     box-shadow: 10px 10px 0px -2px rgba(0,0,0,0.12);
-    z-index: 10;
+    z-index: 30;
+    padding: 10px;
+    border: 5px solid rgb(125, 143, 167);
+    border-radius: 15px;
+    font: 400 20px "Darumadrop One", sans-serif;
+    color: white;
+    background: #8da7be;
+    background: linear-gradient(5deg, rgb(147, 171, 194) 0%, rgb(175, 202, 219) 100%);
+}
+
+#custom-draggable {
+    position: fixed;
+    top: 50%;
+    right: 24px;
+    left: auto;
+    transform: translateY(-50%);
+    z-index: 61;
+    box-shadow: 10px 10px 0px -2px rgba(0,0,0,0.12);
     padding: 10px;
     border: 5px solid rgb(125, 143, 167);
     border-radius: 15px;
@@ -293,16 +382,116 @@ footer {
 #music-drag-handle, #custom-drag-handle, #todo-drag-handle{
     z-index: 11;
     margin-bottom: 10px;
+    touch-action: none;
+    user-select: none;
+}
+
+.custom-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 60;
 }
 
 /*customize popup*/
 .changepet {
     display: grid;
-    max-width: 250px;
+    width: min(360px, 92vw);
+    max-width: 92vw;
 }
-.changepet button{
+
+.custom-modal-close {
+    border: none;
+    background: transparent;
+    color: white;
+    font: 600 20px "Darumadrop One", sans-serif;
+    line-height: 1;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    flex-shrink: 0;
+    margin-left: 8px;
+    cursor: pointer;
+}
+.changepet .button{
     width: 100%;
     margin-top: 5px;
+}
+
+.changepet #custom-drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.settings-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.settings-tab {
+    border: 3px solid rgb(125, 143, 167);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.28);
+    color: white;
+    font: 500 18px "Darumadrop One", sans-serif;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.settings-tab.is-active {
+    background: rgba(255, 255, 255, 0.9);
+    color: rgb(95, 95, 95);
+}
+
+.settings-page {
+    display: none;
+}
+
+.settings-page.is-active {
+    display: block;
+}
+
+.settings-page .button {
+    margin-top: 8px;
+}
+
+.changepet .timer-settings {
+    margin-top: 2px;
+    padding-top: 6px;
+}
+
+.changepet .timer-settings label {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.95em;
+}
+
+.changepet .timer-setting-input {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 4px 0 8px 0;
+    padding: 6px 10px;
+    border-radius: 10px;
+    border: 2px solid rgb(121, 128, 138);
+    font: 400 14px "Comic Neue", "Comic Sans MS", sans-serif;
+    color: black;
+    background: white;
+}
+
+.changepet .timer-settings-save {
+    margin-top: 8px;
+}
+
+.changepet .timer-settings-hint {
+    margin-top: 8px;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.3;
 }
 
 /*music popup*/
@@ -310,18 +499,59 @@ footer {
     width: 390px;
 }
 
+.music-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 8px;
+}
+
+.music-tab {
+    border: 3px solid rgb(125, 143, 167);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.28);
+    color: white;
+    font: 500 18px "Darumadrop One", sans-serif;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.music-tab.is-active {
+    background: rgba(255, 255, 255, 0.9);
+    color: rgb(95, 95, 95);
+}
+
+.music-page {
+    display: none;
+}
+
+.music-page.is-active {
+    display: block;
+}
+
+.music-page label {
+    display: block;
+    margin-top: 8px;
+    margin-bottom: 4px;
+}
+
 .music input[type="submit"] {
     border-radius: 10px;
     border: 2px solid rgb(121, 128, 138);
-    padding: 0px 3px;
+    padding: 2px 8px;
     font: 400 15px "Darumadrop One", sans-serif;
     color: rgb(71, 71, 71);
+    margin-top: 8px;
 }
 
-#spotify-link{
+#spotify-link,
+#youtube-link{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 10px;
     border-radius: 10px;
     border: 2px solid rgb(121, 128, 138);
-    font: 300 14px "Brush Script MT", Cursive;
+    font: 400 14px "Comic Neue", "Comic Sans MS", sans-serif;
     color: black;
 }
 
@@ -351,8 +581,14 @@ footer {
 }
 
 @media (max-width: 500px) {
-    .button-container{
-        transform: scale(0.75);
+    .button-container {
+        gap: 8px;
+        margin-left: 6px;
+        margin-right: 6px;
+    }
+    .button-container .button {
+        font-size: clamp(1rem, 4.2vw, 1.35rem);
+        padding: 1px 8px 8px 8px;
     }
     #music-btn{
         display: none;
@@ -360,10 +596,50 @@ footer {
 }
 
 @media (max-width: 400px) {
-    .button-container{
-        transform: scale(0.65);
+    .button-container .button {
+        font-size: clamp(0.95rem, 4vw, 1.2rem);
     }
     .tail{
         left:  50%;
+    }
+}
+
+/* Narrow viewports: reclaim horizontal space and keep the action block visually dominant */
+@media (max-width: 640px) {
+    .all-container {
+        max-width: none;
+        padding: 8px max(6px, env(safe-area-inset-left)) 8px max(6px, env(safe-area-inset-right));
+    }
+
+    #custom-draggable {
+        right: 8px;
+        left: 8px;
+        top: auto;
+        bottom: 12px;
+        transform: none;
+        width: auto;
+    }
+
+    .logo-container {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+
+    .logo {
+        width: min(68%, 260px);
+    }
+
+    .caption {
+        font-size: 0.95rem;
+        line-height: 1.25;
+    }
+
+    .action {
+        padding: 3px;
+        border-width: 3px;
+    }
+
+    .happy-container {
+        width: 92%;
     }
 }

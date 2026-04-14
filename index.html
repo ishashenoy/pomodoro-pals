@@ -2,13 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Study Timer | Pomodoro Pals</title>
      <link rel="icon" type="image/x-icon" href="img/favicon.png">
 
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Darumadrop+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Darumadrop+One&display=swap" rel="stylesheet">
     
     <style type="text/css">* {cursor: url(https://cur.cursors-4u.net/cursors/cur-11/cur1036.cur), auto !important;}</style><a href="https://www.cursors-4u.com/cursor/2012/02/10/pink-blossom-pointer.html" target="_blank" title="Pink Blossom Pointer"><img src="https://cur.cursors-4u.net/cursor.png" border="0" alt="Pink Blossom Pointer" style="position:absolute; top: 0px; right: 0px;" /></a>
 </head>
@@ -32,7 +33,7 @@
                 <img src="https://i.pinimg.com/originals/7d/88/ad/7d88ad0a2eec6928a58c2ebfe48c7a1a.gif" class="happyHeart" style="display: none">
                 <div class="floating">
                     <button onclick="show('music-draggable')" title="MUSIC" class="button" id="music-btn">🎵<span>MUSIC PLAYER</span></button>
-                    <button onclick="show('custom-draggable')" title="CUSTOMIZE" class="button">🔧<span>CUSTOMIZE</span></button>
+                    <button onclick="openCustomizeModal()" title="CUSTOMIZE" class="button">🔧<span>CUSTOMIZE</span></button>
                     <button onclick="show('todo-draggable')" title="TO-DO LIST" class="button">✔<span>TO-DO LIST</span></button>
                 </div>
             </div>
@@ -47,28 +48,58 @@
                 <div class="timerContainer">
                     <div id="countdown">25:00</div>
                 </div>
-                <button onclick="changeStartTime(25)" class="button">POMODORO</button>
-                <button onclick="changeStartTime(5)" class="button">BREAK</button>
+                <button onclick="startPomodoroSession()" class="button">POMODORO</button>
+                <button onclick="startBreakSession()" class="button">BREAK</button>
             </div>            
         </div>
         <br>
     </div>
 
     <div id="music-draggable" class="music" style="display: none">
-        <div id="music-drag-handle"">🎵 Music Player</div>
-        <form method="GET" class="music form">
-            <iframe id="spotify-frame" src="https://open.spotify.com/embed/playlist/4hFg3Hi7EotOJapd0ef4jh?utm_source=generator" width="100%" height="155" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            <label for="spotify-link">Enter a Spotify Playlist Link (URL):</label><br>
-            <input id="spotify-link" type="text" aria-autocomplete="list">
-            <input type="submit">
-        </form>
+        <div id="music-drag-handle">🎵 Music Player</div>
+        <div class="music-tabs" role="tablist" aria-label="Music pages">
+            <button type="button" class="music-tab is-active" id="music-tab-spotify" onclick="setMusicPage('spotify')" role="tab" aria-controls="music-page-spotify" aria-selected="true">Spotify</button>
+            <button type="button" class="music-tab" id="music-tab-youtube" onclick="setMusicPage('youtube')" role="tab" aria-controls="music-page-youtube" aria-selected="false">YouTube</button>
+        </div>
+        <div id="music-page-spotify" class="music-page is-active" role="tabpanel" aria-labelledby="music-tab-spotify">
+            <form method="GET" id="spotify-form">
+                <iframe id="spotify-frame" src="https://open.spotify.com/embed/playlist/4hFg3Hi7EotOJapd0ef4jh?utm_source=generator" width="100%" height="155" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                <label for="spotify-link">Enter a Spotify playlist/song URL:</label>
+                <input id="spotify-link" type="text" aria-autocomplete="list" placeholder="https://open.spotify.com/playlist/...">
+                <input type="submit" value="Load Spotify">
+            </form>
+        </div>
+        <div id="music-page-youtube" class="music-page" role="tabpanel" aria-labelledby="music-tab-youtube">
+            <form method="GET" id="youtube-form">
+                <iframe id="youtube-frame" src="https://www.youtube.com/embed/videoseries?list=PLFgquLnL59alW3xmYiWRaoz0oM3H17Lth" width="100%" height="155" frameborder="0" allowfullscreen="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" loading="lazy"></iframe>
+                <label for="youtube-link">Enter a YouTube playlist/song URL:</label>
+                <input id="youtube-link" type="text" aria-autocomplete="list" placeholder="https://www.youtube.com/watch?v=...">
+                <input type="submit" value="Load YouTube">
+            </form>
+        </div>
     </div>
 
+    <div id="custom-modal-backdrop" class="custom-modal-backdrop" style="display: none" onclick="closeCustomizeModal()"></div>
     <div id="custom-draggable" class="changepet" style="display: none">
-        <div id="custom-drag-handle"">🔧 Customize</div>
-        <button onclick="changePet()" class="button">CHANGE PET</button><br>
-        <button onclick="changeWall()" class="button">CHANGE WALL</button>
-        <button onclick="changeRug()" class="button">CHANGE RUG</button>
+        <div id="custom-drag-handle">🔧 Settings <button type="button" class="custom-modal-close" onclick="closeCustomizeModal()" aria-label="Close customize modal">X</button></div>
+        <div class="settings-tabs" role="tablist" aria-label="Settings pages">
+            <button type="button" class="settings-tab is-active" id="settings-tab-appearance" onclick="setSettingsPage('appearance')" role="tab" aria-controls="settings-page-appearance" aria-selected="true">Appearance</button>
+            <button type="button" class="settings-tab" id="settings-tab-timer" onclick="setSettingsPage('timer')" role="tab" aria-controls="settings-page-timer" aria-selected="false">Timer</button>
+        </div>
+        <div id="settings-page-appearance" class="settings-page is-active" role="tabpanel" aria-labelledby="settings-tab-appearance">
+            <button onclick="changePet()" class="button">CHANGE PET</button>
+            <button onclick="changeWall()" class="button">CHANGE WALL</button>
+            <button onclick="changeRug()" class="button">CHANGE RUG</button>
+        </div>
+        <div id="settings-page-timer" class="settings-page" role="tabpanel" aria-labelledby="settings-tab-timer">
+            <div class="timer-settings">
+                <label for="pomodoro-minutes">Pomodoro length (minutes):</label>
+                <input id="pomodoro-minutes" class="timer-setting-input" type="number" min="1" max="120" step="1" value="25">
+                <label for="break-minutes">Break length (minutes):</label>
+                <input id="break-minutes" class="timer-setting-input" type="number" min="1" max="60" step="1" value="5">
+                <button type="button" onclick="saveTimerDurations()" class="button timer-settings-save">SAVE TIMER LENGTHS</button>
+            </div>
+        </div>
     </div>
 
     <div oncontextmenu="return false;" id="todo-draggable" class="todo" style="display: none">
@@ -82,5 +113,5 @@
     </div>
     <script src='script.js'></script>
 </body>
-<footer>created by <a href="https://github.com/ishashenoy">@ishashenoy</a></footer>
+<footer><a href="https://ishashenoy.dev" target="_blank">more by me</a></footer>
 </html>
